@@ -3,5 +3,16 @@
 # intellij-one Changelog
 
 ## [Unreleased]
+
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+
+- new postfix templates `toList`
+- new postfix templates `toSet`
+
+## [0.0.1] - 2022-09-27
+
+### Added
+
+- new postfix template `toIdMap`
+- Initial scaffold created
+  from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)

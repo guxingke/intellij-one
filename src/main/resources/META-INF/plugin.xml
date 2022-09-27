@@ -1,18 +1,21 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.guxingke.intellijone</id>
-    <name>intellij-one</name>
-    <vendor>guxingke</vendor>
+  <id>com.guxingke.intellij.one</id>
+  <name>Intellij-One</name>
+  <vendor>guxingke</vendor>
 
-    <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.java</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.guxingke.intellijone.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.guxingke.intellijone.services.MyProjectService"/>
-    </extensions>
+  <actions>
+    <action id="HelloAction" class="com.guxingke.intellij.plugin.action.HelloAction" text="hello">
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </action>
+  </actions>
 
-    <applicationListeners>
-        <listener class="com.github.guxingke.intellijone.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+  <extensions defaultExtensionNs="com.intellij">
+    <codeInsight.template.postfixTemplateProvider language="JAVA"
+        implementationClass="com.guxingke.intellij.plugin.postfix.ToolsPostfixTemplateProvider"/>
+  </extensions>
 </idea-plugin>
