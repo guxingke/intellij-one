@@ -2,7 +2,10 @@ package com.guxingke.intellij.plugin.util;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiType;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +31,10 @@ public interface PsiExpressionUtils {
   /**
    * 判定表达式类型是否是指定类
    */
-  static boolean isClass(@NotNull PsiExpression e, @NotNull String qualifiedName) {
+  static boolean isClass(
+      @NotNull PsiExpression e,
+      @NotNull String qualifiedName
+  ) {
     var type = e.getType();
     if (!(type instanceof PsiClassType)) {
       return false;
@@ -57,6 +63,12 @@ public interface PsiExpressionUtils {
    */
   static PsiClass findClass(@NotNull PsiExpression e) {
     var type = e.getType();
+    return findClass(type);
+  }
+
+  static PsiClass findClass(
+      @NotNull PsiType type
+  ) {
     if (!(type instanceof PsiClassType)) {
       return null;
     }
@@ -81,5 +93,25 @@ public interface PsiExpressionUtils {
     var pgc = ((PsiClassType) type).resolveGenerics();
 
     return ((PsiClassType) pgc.getSubstitutor().getSubstitutionMap().get(pc.getTypeParameters()[0])).resolve();
+  }
+
+  static PsiMethod findMethod(PsiElement ele) {
+    if (ele == null) {
+      return null;
+    }
+    PsiMethod m = null;
+
+    for (; ; ) {
+      var p = ele.getParent();
+      if (p == null) {
+        break;
+      }
+      if (p instanceof PsiMethod) {
+        m = (PsiMethod) p;
+        break;
+      }
+      ele = p;
+    }
+    return m;
   }
 }

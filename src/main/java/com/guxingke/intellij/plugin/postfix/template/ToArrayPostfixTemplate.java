@@ -56,7 +56,7 @@ public class ToArrayPostfixTemplate extends PostfixTemplateWithExpressionSelecto
     }
 
     var stream = PsiExpressionUtils.isClass(e, "java.util.stream.Stream");
-    var ts = "$expr$.toArray(new $componentClassName$[0])$END$";
+    var ts = "$expr$.toArray($componentClassName$[]::new)$END$";
     if (stream) {
       ts = "$expr$.toArray($componentClassName$[]::new)$END$";
     }

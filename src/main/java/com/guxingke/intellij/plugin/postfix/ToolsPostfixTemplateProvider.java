@@ -3,6 +3,7 @@ package com.guxingke.intellij.plugin.postfix;
 import com.guxingke.intellij.plugin.postfix.template.GroupingByPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.JoiningPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.PartitioningByPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.StructMapperPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.ToArrayPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.ToIdentifierMapPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.ToListPostfixTemplate;
@@ -27,7 +28,8 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
                        new JoiningPostfixTemplate(this),
                        new GroupingByPostfixTemplate(this),
                        new PartitioningByPostfixTemplate(this),
-                       new ToArrayPostfixTemplate(this)
+                       new ToArrayPostfixTemplate(this),
+                       new StructMapperPostfixTemplate(this)
     );
   }
 
