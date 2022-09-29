@@ -14,10 +14,10 @@ import com.intellij.psi.PsiExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressionSelector {
+public class ToArrayPostfixTemplate extends PostfixTemplateWithExpressionSelector {
 
-  public ToIdentifierMapPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("toIdMap", "toIdMap", "convert to id map", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
+  public ToArrayPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
+    super("toArray", "toArray", "convert to array", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
   }
 
   private static Condition<PsiElement> cond() {
@@ -56,9 +56,9 @@ public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressio
     }
 
     var stream = PsiExpressionUtils.isClass(e, "java.util.stream.Stream");
-    var ts = "$expr$.stream().collect(java.util.stream.Collectors.toMap($componentClassName$::getId, it -> it, (l, r) -> l))$END$";
+    var ts = "$expr$.toArray(new $componentClassName$[0])$END$";
     if (stream) {
-      ts = "$expr$.collect(java.util.stream.Collectors.toMap($componentClassName$::getId, it -> it, (l, r) -> l))$END$";
+      ts = "$expr$.toArray($componentClassName$[]::new)$END$";
     }
 
     document.deleteString(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
@@ -66,6 +66,7 @@ public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressio
     var tpl = manager.createTemplate(getId(), "", ts);
     tpl.addVariable("expr", new TextExpression(expression.getText()), false);
     tpl.addVariable("componentClassName", new TextExpression(cls.getQualifiedName()), false);
+
     tpl.setToReformat(true);
     manager.startTemplate(editor, tpl);
   }

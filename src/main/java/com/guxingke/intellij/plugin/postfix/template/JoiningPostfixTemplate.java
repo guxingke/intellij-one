@@ -4,6 +4,7 @@ import com.guxingke.intellij.plugin.Const;
 import com.guxingke.intellij.plugin.util.PsiExpressionUtils;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TextExpression;
+import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateWithExpressionSelector;
 import com.intellij.codeInsight.template.postfix.util.JavaPostfixTemplatesUtils;
@@ -11,13 +12,14 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressionSelector {
+public class JoiningPostfixTemplate extends PostfixTemplateWithExpressionSelector {
 
-  public ToIdentifierMapPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("toIdMap", "toIdMap", "convert to id map", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
+  public JoiningPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
+    super("joining", "joining", "joining strings", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
   }
 
   private static Condition<PsiElement> cond() {
@@ -35,7 +37,8 @@ public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressio
         return false;
       }
 
-      return PsiExpressionUtils.findComponentClass(ee) != null;
+      var cc = PsiExpressionUtils.findComponentClass(ee);
+      return cc != null && Objects.equals(cc.getQualifiedName(), Const.CLS_JAVA_LANG_STRING);
     };
   }
 
@@ -55,17 +58,20 @@ public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressio
       return;
     }
 
-    var stream = PsiExpressionUtils.isClass(e, "java.util.stream.Stream");
-    var ts = "$expr$.stream().collect(java.util.stream.Collectors.toMap($componentClassName$::getId, it -> it, (l, r) -> l))$END$";
+    var common = ".collect(java.util.stream.Collectors.joining($keyF$))$END$";
+    var stream = PsiExpressionUtils.isClass(e, Const.CLS_JAVA_UTIL_STREAM_STREAM);
+    var ts = "$expr$.stream()" + common;
     if (stream) {
-      ts = "$expr$.collect(java.util.stream.Collectors.toMap($componentClassName$::getId, it -> it, (l, r) -> l))$END$";
+      ts = "$expr$" + common;
     }
 
     document.deleteString(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
 
     var tpl = manager.createTemplate(getId(), "", ts);
     tpl.addVariable("expr", new TextExpression(expression.getText()), false);
-    tpl.addVariable("componentClassName", new TextExpression(cls.getQualifiedName()), false);
+
+    var fv = new Variable("keyF", "", ",", true);
+    tpl.addVariable(fv.getName(), fv.getExpression(), fv.getDefaultValueExpression(), true, false);
     tpl.setToReformat(true);
     manager.startTemplate(editor, tpl);
   }

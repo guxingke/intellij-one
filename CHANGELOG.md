@@ -4,10 +4,17 @@
 
 ## [Unreleased]
 
+## [0.0.2] - 2022-09-28
+
 ### Added
 
-- new postfix templates `toList`
-- new postfix templates `toSet`
+- new postfix template `toList`
+- new postfix template `toSet`
+- new postfix template `toMap`
+- new postfix template `groupingBy`
+- new postfix template `partitioningBy`
+- new postfix template `joining`
+- new postfix template `toArray`
 
 ## [0.0.1] - 2022-09-27
 

@@ -72,4 +72,10 @@ public class TemplateTest extends LightJavaCodeInsightFixtureTestCase {
                           .contains("demos.stream().collect(Collectors.toMap(Demo::getId, it -> it, (l, r) -> l))"));
   }
 
+  public void test_toMap() {
+    var file = myFixture.configureByText(JavaFileType.INSTANCE, v2);
+    myFixture.type(".toMap\t");
+    Assert.assertTrue(file.getText()
+                          .contains("demos.stream().collect(Collectors.toMap(Demo::, ))"));
+  }
 }

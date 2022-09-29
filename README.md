@@ -1,8 +1,8 @@
 # intellij-one
 
 ![Build](https://github.com/guxingke/intellij-one/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/20032-intellij-one.svg)](https://plugins.jetbrains.com/plugin/20032-intellij-one)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/20032-intellij-one.svg)](https://plugins.jetbrains.com/plugin/20032-intellij-one)
+[![Version](https://img.shields.io/jetbrains/plugin/v/20032-the-one-toolbox.svg)](https://plugins.jetbrains.com/plugin/20032-the-one-toolbox)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/20032-the-one-toolbox.svg)](https://plugins.jetbrains.com/plugin/20032-the-one-toolbox)
 
 <!-- Plugin description -->
 Personal java daily development of all-in-one plug-in collection.
@@ -13,11 +13,13 @@ Personal java daily development of all-in-one plug-in collection.
 ## postfix templates
 
 - [x] toIdMap, convert collection or stream to a map with key of component pojo id, value of component pojo.
-- [ ] toList
-- [ ] toSet
-- [ ] groupingBy
-- [ ] partitioningBy
-- [ ] joining
+- [x] toMap
+- [x] toList
+- [x] toSet
+- [x] groupingBy
+- [x] partitioningBy
+- [x] joining
+- [x] toArray
 
 ## generator
 
