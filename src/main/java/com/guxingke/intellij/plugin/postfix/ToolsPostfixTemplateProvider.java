@@ -1,5 +1,6 @@
 package com.guxingke.intellij.plugin.postfix;
 
+import com.guxingke.intellij.plugin.postfix.template.TemplateFactory;
 import com.guxingke.intellij.plugin.postfix.template.collection.GroupingByPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.collection.JoiningPostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.collection.PartitioningByPostfixTemplate;
@@ -14,6 +15,8 @@ import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvid
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
@@ -21,16 +24,19 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
   private final Set<PostfixTemplate> templates;
 
   public ToolsPostfixTemplateProvider() {
-    templates = Set.of(new ToIdentifierMapPostfixTemplate(this),
-                       new ToMapPostfixTemplate(this),
-                       new ToListPostfixTemplate(this),
-                       new ToSetPostfixTemplate(this),
-                       new JoiningPostfixTemplate(this),
-                       new GroupingByPostfixTemplate(this),
-                       new PartitioningByPostfixTemplate(this),
-                       new ToArrayPostfixTemplate(this),
-                       new StructMapperPostfixTemplate(this)
+    var builtin = Set.of(new ToIdentifierMapPostfixTemplate(this),
+                         new ToMapPostfixTemplate(this),
+                         new ToListPostfixTemplate(this),
+                         new ToSetPostfixTemplate(this),
+                         new JoiningPostfixTemplate(this),
+                         new GroupingByPostfixTemplate(this),
+                         new PartitioningByPostfixTemplate(this),
+                         new ToArrayPostfixTemplate(this),
+                         new StructMapperPostfixTemplate(this)
     );
+
+    var externals = TemplateFactory.createTemplates(this);
+    templates = Stream.concat(externals.stream(), builtin.stream()).collect(Collectors.toSet());
   }
 
   @Override

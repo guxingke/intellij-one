@@ -19,6 +19,11 @@ repositories {
   mavenCentral()
 }
 
+dependencies {
+// https://mvnrepository.com/artifact/org.yaml/snakeyaml
+  implementation("org.yaml:snakeyaml:1.33")
+}
+
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
   pluginName.set(properties("pluginName"))

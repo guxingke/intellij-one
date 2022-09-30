@@ -1,66 +1,75 @@
-- name: toIdMap
-  description: convert to id map
-  templates:
-      - type: generic
-        class: java.util.Collection
-        requires:
-            - type: class
-              name: java.util.stream.Stream
-            - type: method
-              class: $componentClass$
-              name: ANY_getId(VOID)  # 表示有任意返回值，无参的函数签名
-        template: $expr$.stream().collect(java.lang.stream.Collectors.toMap($componentClass$::getId, it -> it, (l, r) -> l))$END$;
+namespace: example
+definitions:
+  - name: toIdMap2
+    description: convert to id map
+    templates:
+        - type: generic
+          clazz: java.util.Collection
+          requires:
+              - type: class
+                name: java.util.stream.Stream
+              - type: method
+                clazz: $componentClass$
+                name: getId  # 方法名
+          template: $expr$.stream().collect(java.util.stream.Collectors.toMap($componentClass$::getId, it -> it, (l, r) -> l))$END$
 
-- name: toMap
-  description: convert to map
-  templates:
-      - type: generic # 泛型
-        class: java.util.Collection
-        requires:
-            - type: class
-              name: java.util.stream.Stream
-        template: $expr$.stream().collect(java.lang.stream.Collectors.toMap($keyFun$, $valueFun$)$END$;
-      - type: array
-        class: ARRAY
-        requires:
-            - type: class
-              name: java.util.stream.Stream
-        template: "$expr$.stream().collect(java.lang.stream.Collectors.toMap($keyFun$, $valueFun$)$END$;"
+  - name: toMap2
+    description: convert to map
+    templates:
+        - type: generic # 泛型
+          clazz: java.util.Collection
+          requires:
+              - type: class
+                name: java.util.stream.Stream
+          template: $expr$.stream().collect(java.util.stream.Collectors.toMap($keyFun$, $valueFun$)$END$
+        - type: array
+          clazz: ARRAY
+          requires:
+              - type: class
+                name: java.util.stream.Stream
+          template: "$expr$.stream().collect(java.util.stream.Collectors.toMap($keyFun$, $valueFun$)$END$"
 
-- name: toInt
-  description: convert to int
-  templates:
-    - type: primitive # 原始类型
-      class: long
-      template: ((int) ($expr$))$END$
-    - type: normal
-      class: java.lang.String
-      requires:
-        - type: class
-          name: com.google.common.primitives.Ints # guava exists
-      template: com.google.common.primitives.Ints.tryParse($expr$).intValue()$END$
-    - type: normal
-      class: java.lang.String
-      template: java.lang.Integer.parseInt($expr$).intValue()$END$
-    - type: normal
-      class: java.lang.Number
-      template: $expr$.intValue()$END$
+  - name: toInt
+    description: convert to int
+    templates:
+      - type: primitive # 原始类型
+        clazz: long
+        template: ((int) ($expr$))$END$
+      - type: normal
+        clazz: java.lang.String
+        requires:
+          - type: class
+            name: com.google.common.primitives.Ints # guava exists
+        template: com.google.common.primitives.Ints.tryParse($expr$).intValue()$END$
+      - type: normal
+        clazz: java.lang.String
+        template: java.lang.Integer.parseInt($expr$).intValue()$END$
+      - type: normal
+        clazz: java.lang.Number
+        template: $expr$.intValue()$END$
 
-- name: toLong
-  description: convert to long
-  templates:
-    - type: primitive # 原始类型
-      class: int
-      template: ((long) ($expr$))$END$
-    - type: normal
-      class: java.lang.String
-      requires:
-        - type: class
-          name: com.google.common.primitives.Longs # guava exists
-      template: com.google.common.primitives.Longs.tryParse($expr$).intValue()$END$
-    - type: normal
-      class: java.lang.String
-      template: java.lang.Long.parseLong($expr$).longValue()$END$
-    - type: normal
-      class: java.lang.Number
-      template: $expr$.longValue()$END$
+  - name: toLong
+    description: convert to long
+    templates:
+      - type: primitive # 原始类型
+        clazz: int
+        template: ((long) ($expr$))$END$
+      - type: normal
+        clazz: java.lang.String
+        requires:
+          - type: class
+            name: com.google.common.primitives.Longs # guava exists
+        template: com.google.common.primitives.Longs.tryParse($expr$).intValue()$END$
+      - type: normal
+        clazz: java.lang.String
+        template: java.lang.Long.parseLong($expr$).longValue()$END$
+      - type: normal
+        clazz: java.lang.Number
+        template: $expr$.longValue()$END$
+
+  - name: className
+    description: sout class name
+    templates:
+      - type: normal
+        clazz: java.lang.Object
+        template: java.lang.System.out.println("$expr$ with class $exprClass$")$END$
