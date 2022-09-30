@@ -1,25 +1,24 @@
-package com.guxingke.intellij.plugin.postfix.template;
+package com.guxingke.intellij.plugin.postfix.template.collection;
 
 import com.guxingke.intellij.plugin.Const;
+import com.guxingke.intellij.plugin.postfix.template.BasePostfixTemplate;
 import com.guxingke.intellij.plugin.util.PsiExpressionUtils;
+import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TextExpression;
 import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
-import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateWithExpressionSelector;
-import com.intellij.codeInsight.template.postfix.util.JavaPostfixTemplatesUtils;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JoiningPostfixTemplate extends PostfixTemplateWithExpressionSelector {
+public class GroupingByPostfixTemplate extends BasePostfixTemplate {
 
-  public JoiningPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("joining", "joining", "joining strings", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
+  public GroupingByPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
+    super("groupingBy", "groupingBy", "grouping by function", cond(), provider);
   }
 
   private static Condition<PsiElement> cond() {
@@ -37,8 +36,7 @@ public class JoiningPostfixTemplate extends PostfixTemplateWithExpressionSelecto
         return false;
       }
 
-      var cc = PsiExpressionUtils.findComponentClass(ee);
-      return cc != null && Objects.equals(cc.getQualifiedName(), Const.CLS_JAVA_LANG_STRING);
+      return PsiExpressionUtils.findComponentClass(ee) != null;
     };
   }
 
@@ -53,27 +51,58 @@ public class JoiningPostfixTemplate extends PostfixTemplateWithExpressionSelecto
     var manager = TemplateManager.getInstance(project);
     var document = editor.getDocument();
 
+    // logic
     var cls = PsiExpressionUtils.findComponentClass(e);
     if (cls == null) {
       return;
     }
 
-    var common = ".collect(java.util.stream.Collectors.joining($keyF$))$END$";
+    var common = ".collect(java.util.stream.Collectors.groupingBy($componentClassName$::$keyF$)$END$";
+    var stream = PsiExpressionUtils.isClass(e, Const.CLS_JAVA_UTIL_STREAM_STREAM);
+    var ts = "$expr$.stream()" + common;
+    if (stream) {
+      ts = "$expr$" + common;
+    }
+    // end
+    var tpl = manager.createTemplate(getId(), "", ts);
+
+    // logic
+    tpl.addVariable("expr", new TextExpression(expression.getText()), false);
+    tpl.addVariable("componentClassName", new TextExpression(cls.getQualifiedName()), false);
+
+    var fv = new Variable("keyF", "", "", true);
+    tpl.addVariable(fv.getName(), fv.getExpression(), fv.getDefaultValueExpression(), true, false);
+    tpl.setToReformat(true);
+    // end
+
+    document.deleteString(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
+    manager.startTemplate(editor, tpl);
+  }
+
+  @Override
+  protected Template createTemplate(
+      @NotNull TemplateManager manager,
+      @NotNull PsiExpression e
+  ) {
+    var cls = PsiExpressionUtils.findComponentClass(e);
+    if (cls == null) {
+      return null;
+    }
+
+    var common = ".collect(java.util.stream.Collectors.groupingBy($componentClassName$::$keyF$)$END$";
     var stream = PsiExpressionUtils.isClass(e, Const.CLS_JAVA_UTIL_STREAM_STREAM);
     var ts = "$expr$.stream()" + common;
     if (stream) {
       ts = "$expr$" + common;
     }
 
-    document.deleteString(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
+    var tpl = manager.createTemplate(getId(), "collections", ts);
+    tpl.addVariable("expr", new TextExpression(e.getText()), false);
+    tpl.addVariable("componentClassName", new TextExpression(cls.getQualifiedName()), false);
 
-    var tpl = manager.createTemplate(getId(), "", ts);
-    tpl.addVariable("expr", new TextExpression(expression.getText()), false);
-
-    var fv = new Variable("keyF", "", ",", true);
+    var fv = new Variable("keyF", "", "", true);
     tpl.addVariable(fv.getName(), fv.getExpression(), fv.getDefaultValueExpression(), true, false);
-    tpl.setToReformat(true);
-    manager.startTemplate(editor, tpl);
+    return tpl;
   }
 
   @Override

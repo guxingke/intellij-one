@@ -1,12 +1,13 @@
-package com.guxingke.intellij.plugin.postfix.template;
+package com.guxingke.intellij.plugin.postfix.template.collection;
 
 import com.guxingke.intellij.plugin.Const;
+import com.guxingke.intellij.plugin.postfix.template.BasePostfixTemplate;
 import com.guxingke.intellij.plugin.util.PsiExpressionUtils;
+import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TextExpression;
+import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
-import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateWithExpressionSelector;
-import com.intellij.codeInsight.template.postfix.util.JavaPostfixTemplatesUtils;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
@@ -14,10 +15,10 @@ import com.intellij.psi.PsiExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressionSelector {
+public class ToMapPostfixTemplate extends BasePostfixTemplate {
 
-  public ToIdentifierMapPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("toIdMap", "toIdMap", "convert to id map", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
+  public ToMapPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
+    super("toMap", "toMap", "convert to map", cond(), provider);
   }
 
   private static Condition<PsiElement> cond() {
@@ -40,34 +41,27 @@ public class ToIdentifierMapPostfixTemplate extends PostfixTemplateWithExpressio
   }
 
   @Override
-  protected void expandForChooseExpression(
-      @NotNull PsiElement expression,
-      @NotNull Editor editor
+  protected Template createTemplate(
+      @NotNull TemplateManager manager,
+      @NotNull PsiExpression e
   ) {
-    var e = (PsiExpression) expression;
-
-    var project = expression.getProject();
-    var manager = TemplateManager.getInstance(project);
-    var document = editor.getDocument();
-
     var cls = PsiExpressionUtils.findComponentClass(e);
-    if (cls == null) {
-      return;
-    }
-
-    var stream = PsiExpressionUtils.isClass(e, "java.util.stream.Stream");
-    var ts = "$expr$.stream().collect(java.util.stream.Collectors.toMap($componentClassName$::getId, it -> it, (l, r) -> l))$END$";
+    var common = ".collect(java.util.stream.Collectors.toMap($componentClassName$::$keyF$, $valueF$))$END$";
+    var stream = PsiExpressionUtils.isClass(e, Const.CLS_JAVA_UTIL_STREAM_STREAM);
+    var ts = "$expr$.stream()" + common;
     if (stream) {
-      ts = "$expr$.collect(java.util.stream.Collectors.toMap($componentClassName$::getId, it -> it, (l, r) -> l))$END$";
+      ts = "$expr$" + common;
     }
-
-    document.deleteString(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
 
     var tpl = manager.createTemplate(getId(), "", ts);
-    tpl.addVariable("expr", new TextExpression(expression.getText()), false);
+    tpl.addVariable("expr", new TextExpression(e.getText()), false);
     tpl.addVariable("componentClassName", new TextExpression(cls.getQualifiedName()), false);
-    tpl.setToReformat(true);
-    manager.startTemplate(editor, tpl);
+
+    var fv = new Variable("keyF", "", "", true);
+    tpl.addVariable(fv.getName(), fv.getExpression(), fv.getDefaultValueExpression(), true, false);
+    var vv = new Variable("valueF", "", "", true);
+    tpl.addVariable(vv.getName(), vv.getExpression(), vv.getDefaultValueExpression(), true, false);
+    return tpl;
   }
 
   @Override

@@ -1,11 +1,10 @@
-package com.guxingke.intellij.plugin.postfix.template;
+package com.guxingke.intellij.plugin.postfix.template.struct;
 
+import com.guxingke.intellij.plugin.postfix.template.BasePostfixTemplate;
 import com.guxingke.intellij.plugin.util.PsiExpressionUtils;
+import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
-import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateWithExpressionSelector;
-import com.intellij.codeInsight.template.postfix.util.JavaPostfixTemplatesUtils;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -24,10 +23,10 @@ import org.jetbrains.annotations.Nullable;
  *
  * 暂时只支持单入参
  */
-public class StructMapperPostfixTemplate extends PostfixTemplateWithExpressionSelector {
+public class StructMapperPostfixTemplate extends BasePostfixTemplate {
 
   public StructMapperPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("mapper", "mapper", "pojo mapper", JavaPostfixTemplatesUtils.selectorTopmost(cond()), provider);
+    super("map", "map", "pojo mapper", cond(), provider);
   }
 
   private static Condition<PsiElement> cond() {
@@ -68,16 +67,10 @@ public class StructMapperPostfixTemplate extends PostfixTemplateWithExpressionSe
   }
 
   @Override
-  protected void expandForChooseExpression(
-      @NotNull PsiElement expression,
-      @NotNull Editor editor
+  protected Template createTemplate(
+      @NotNull TemplateManager manager,
+      @NotNull PsiExpression e
   ) {
-    var e = (PsiExpression) expression;
-
-    var project = expression.getProject();
-    var manager = TemplateManager.getInstance(project);
-    var document = editor.getDocument();
-
     // current ele
     var ele = ((PsiReferenceExpression) e).getElement();
     // find current method
@@ -87,12 +80,8 @@ public class StructMapperPostfixTemplate extends PostfixTemplateWithExpressionSe
     var pt = PsiExpressionUtils.findClass(p1.getType());
 
     var ts = mapper(ele.getText(), pt, prt);
-
-    document.deleteString(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
-
     var tpl = manager.createTemplate(getId(), "", ts);
-    tpl.setToReformat(true);
-    manager.startTemplate(editor, tpl);
+    return tpl;
   }
 
   private String mapper(
@@ -107,7 +96,7 @@ public class StructMapperPostfixTemplate extends PostfixTemplateWithExpressionSe
     var igm = Arrays.stream(ims)
         .filter(it -> it.getParameterList().isEmpty()) // 无参
         .filter(it -> it.getName().startsWith("get") || it.getName().startsWith("is"))
-        .collect(Collectors.toMap(it -> propertyName(it.getName()), PsiMethod::getName));
+        .collect(Collectors.toMap(it -> propertyName(it.getName()), it -> it));
 
     for (PsiMethod method : output.getAllMethods()) {
       if (method.getParameterList().getParameters().length != 1) {
@@ -119,15 +108,29 @@ public class StructMapperPostfixTemplate extends PostfixTemplateWithExpressionSe
       }
 
       var pn = propertyName(mn);
-      if (igm.containsKey(pn)) {
-        ss.add("d." + mn + "(%s.%s());".formatted(name, igm.get(pn)));
-      } else {
-        ss.add("d." + mn + "();");
-      }
+      var get = igm.get(pn);
+      ss.add("d." + conv(name, method, get));
     }
 
     ss.add("return d;");
     return String.join("\n", ss);
+  }
+
+  private String conv(
+      @NotNull String objName,
+      @NotNull PsiMethod set,
+      @NotNull PsiMethod get
+  ) {
+    var ot = set.getParameterList().getParameter(0).getType();
+    var it = get.getReturnType();
+    // if type equals
+    assert it != null;
+    if (ot.getCanonicalText().equals(it.getCanonicalText())) {
+      return "%s(%s.%s());".formatted(set.getName(), objName, get.getName());
+    }
+
+    // TODO type cast
+    return "%s(%s.%s());".formatted(set.getName(), objName, get.getName());
   }
 
   private String propertyName(String methodName) {

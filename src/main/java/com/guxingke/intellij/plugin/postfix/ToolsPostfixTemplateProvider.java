@@ -1,14 +1,14 @@
 package com.guxingke.intellij.plugin.postfix;
 
-import com.guxingke.intellij.plugin.postfix.template.GroupingByPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.JoiningPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.PartitioningByPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.StructMapperPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.ToArrayPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.ToIdentifierMapPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.ToListPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.ToMapPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.ToSetPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.GroupingByPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.JoiningPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.PartitioningByPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.struct.StructMapperPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.ToArrayPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.ToIdentifierMapPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.ToListPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.ToMapPostfixTemplate;
+import com.guxingke.intellij.plugin.postfix.template.collection.ToSetPostfixTemplate;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplate;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
 import com.intellij.openapi.editor.Editor;
@@ -32,7 +32,6 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
                        new StructMapperPostfixTemplate(this)
     );
   }
-
 
   @Override
   public @NotNull Set<PostfixTemplate> getTemplates() {

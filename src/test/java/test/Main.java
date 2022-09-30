@@ -6,7 +6,6 @@ public class Main {
 
   public static void main(String[] args) {
     var demos = List.of(new Demo());
-
   }
 
   private static DemoDTO map(Demo obj) {
