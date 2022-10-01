@@ -1,17 +1,17 @@
 namespace: example
 definitions:
-  - name: toIdMap2
-    description: convert to id map
-    templates:
-        - type: generic
-          clazz: java.util.Collection
-          requires:
-              - type: class
-                name: java.util.stream.Stream
-              - type: method
-                clazz: $componentClass$
+  - name: toIdMap2  # 补全触发的关键字
+    description: convert to id map  # 补全时的描述
+    templates: # 可能有多个子模板，命中顺序即配置顺序
+        - type: generic # 泛型
+          clazz: java.util.Collection # 容器类名, 此类名可配置为目标类型的父类。
+          requires: # 当前子模板的生效条件, 多个条件的情况下，需要全部满足
+              - type: class # 类, 类存在
+                name: java.util.stream.Stream # 类名
+              - type: method # 方法, 方法存在, 暂只匹配方法名
+                clazz: $componentClass$ # 类名，$xxx$ 为变量，可指定为具体类名
                 name: getId  # 方法名
-          template: $expr$.stream().collect(java.util.stream.Collectors.toMap($componentClass$::getId, it -> it, (l, r) -> l))$END$
+          template: $expr$.stream().collect(java.util.stream.Collectors.toMap($componentClass$::getId, it -> it, (l, r) -> l))$END$ # 模板, 部分变量是内置的
 
   - name: toMap2
     description: convert to map
@@ -22,7 +22,7 @@ definitions:
               - type: class
                 name: java.util.stream.Stream
           template: $expr$.stream().collect(java.util.stream.Collectors.toMap($keyFun$, $valueFun$)$END$
-        - type: array
+        - type: array # 数组
           clazz: ARRAY
           requires:
               - type: class

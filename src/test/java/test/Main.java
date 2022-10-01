@@ -1,11 +1,16 @@
 package test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
   public static void main(String[] args) {
     var demos = List.of(new Demo());
+    var da = demos.toArray(Demo[]::new);
+
+    List.of("123").stream().collect(Collectors.joining());
+
   }
 
   private static DemoDTO map(Demo obj) {

@@ -10,6 +10,10 @@ public class TemplateItemRequire {
     return "class".equals(type);
   }
 
+  public boolean isComponentClass() {
+    return "componentClass".equals(type);
+  }
+
   public boolean isMethod() {
     return "method".equals(type);
   }
