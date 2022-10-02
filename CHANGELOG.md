@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [0.0.3] - 2022-10-01
+
+### Added
+
+- new postfix template `map`
+- user define postfix template
+
 ## [0.0.2] - 2022-09-28
 
 ### Added
