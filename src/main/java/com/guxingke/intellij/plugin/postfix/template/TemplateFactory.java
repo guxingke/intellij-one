@@ -1,5 +1,6 @@
 package com.guxingke.intellij.plugin.postfix.template;
 
+import com.guxingke.intellij.plugin.Configs;
 import com.guxingke.intellij.plugin.postfix.template.conf.TemplateConf;
 import com.guxingke.intellij.plugin.postfix.template.conf.TemplateConfig;
 import com.guxingke.intellij.plugin.postfix.template.conf.TemplateDefinition;
@@ -19,9 +20,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPrimitiveType;
 import com.intellij.psi.search.GlobalSearchScope;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -33,26 +32,21 @@ public class TemplateFactory {
   /**
    * 默认配置目录，当前用户目录下 `.config/the-one-toolbox`。
    *
-   * 自定义模板配置配置， 配置目录下 `templates` 目录下的 yml 文件。
+   * 自定义模板配置配置， 配置目录下 `postfix` 目录下的 yml 文件。
    */
-  public static Set<PostfixTemplate> createTemplates(PostfixTemplateProvider provider) {
-    // default config path
-    String dir = System.getenv("HOME") + "/.config/the-one-toolbox";
-    var cfgDir = System.getenv("INTELLIJ_THE_ONE_TOOLBOX_CONFIG_DIR");
-    if (cfgDir != null) {
-      dir = cfgDir;
-    }
-
-    if (!Files.exists(Paths.get(dir))) {
+  public static Set<PostfixTemplate> createExternalTemplates(PostfixTemplateProvider provider) {
+    var confDir = Configs.getConfDir();
+    if (!Files.exists(confDir) || !Files.isDirectory(confDir)) {
       return new HashSet<>();
     }
 
-    if (!Files.isDirectory(Paths.get(dir))) {
+    var pp = confDir.resolve("postfix");
+    if (!Files.exists(pp) || !Files.isRegularFile(pp)) {
       return new HashSet<>();
     }
 
     try {
-      var cfgs = Files.list(Paths.get(dir, "templates"))
+      var cfgs = Files.list(pp)
           .filter(it -> it.getFileName().toString().endsWith(".yml") || it.getFileName().toString().endsWith(".yaml"))
           .map(it -> TemplateConfig.load(it.toAbsolutePath().toString()))
           .toList();
@@ -61,12 +55,13 @@ public class TemplateFactory {
           .filter(Objects::nonNull)
           .collect(Collectors.toSet());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      e.printStackTrace();
+      return new HashSet<>();
     }
   }
 
   public static Set<PostfixTemplate> createBuiltinTemplates(PostfixTemplateProvider provider) {
-    var resource = TemplateFactory.class.getResourceAsStream("/builtin.yml");
+    var resource = TemplateFactory.class.getResourceAsStream("/postfix/builtin.yml");
     if (resource == null) {
       return new HashSet<>();
     }

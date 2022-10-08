@@ -91,7 +91,7 @@ definitions:
           requires:
               - type: class
                 name: java.util.stream.Stream
-          template: $expr$.stream().collect(java.util.stream.Collectors.toList())$END$
+          template: Arrays.stream($expr$).collect(java.util.stream.Collectors.toList())$END$
 
   - name: toArray
     description: convert to array

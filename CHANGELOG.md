@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### Added
+
+- postfix template variable order.
+- struct mapper type converter.
+
+## [0.0.4] - 2022-10-07
+
+### Changed
+
+- user define config dir changed, from `.config/the-one-toolbox/*.yml` to `.config/the-one-toolbox/postfix/*.yml`.
+
+### Added
+
+- the one toolbox config file, named `.config/the-one-toolbox/config.yml`.
+
 ## [0.0.3] - 2022-10-01
 
 ### Added

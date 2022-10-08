@@ -23,7 +23,7 @@ Personal java daily development of all-in-one plug-in collection.
 
 ## generator
 
-- [ ] object mapper
+- [-] object mapper
 - [ ] data object to mysql database create table statement
 
 <!-- Plugin description end -->

@@ -1,12 +1,26 @@
 package com.guxingke.intellij.plugin.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.codeInsight.CodeInsightActionHandler;
+import com.intellij.codeInsight.actions.CodeInsightAction;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
-public class HelloAction extends AnAction {
+public class HelloAction extends CodeInsightAction {
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
-    // TODO: insert action logic here
+  protected boolean isValidForFile(
+      @NotNull Project project,
+      @NotNull Editor editor,
+      @NotNull PsiFile file
+  ) {
+    return false;
   }
+
+  @Override
+  protected @NotNull CodeInsightActionHandler getHandler() {
+    return null;
+  }
+
 }
