@@ -96,7 +96,7 @@ public class StructMapperPostfixTemplate extends BasePostfixTemplate {
     var igm = Arrays.stream(ims)
         .filter(it -> it.getParameterList().isEmpty()) // 无参
         .filter(it -> it.getName().startsWith("get") || it.getName().startsWith("is"))
-        .collect(Collectors.toMap(it -> propertyName(it.getName()), it -> it));
+        .collect(Collectors.toMap(it -> propertyName(it.getName()), it -> it, (l, r) -> l));
 
     for (PsiMethod method : output.getAllMethods()) {
       if (method.getParameterList().getParameters().length != 1) {
@@ -109,6 +109,10 @@ public class StructMapperPostfixTemplate extends BasePostfixTemplate {
 
       var pn = propertyName(mn);
       var get = igm.get(pn);
+      if (get == null) {
+        ss.add("d." + method.getName() + "($" + method.getName() + "$);");
+        continue;
+      }
       ss.add("d." + conv(name, method, get));
     }
 

@@ -28,8 +28,7 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
     var ic = cfg.getPostfix().getInternal();
     Set<PostfixTemplate> internals = new HashSet<>();
     if (ic.isEnable()) {
-      internals = Set.of(new StructMapperPostfixTemplate(this))
-          .stream()
+      internals = Stream.of(new StructMapperPostfixTemplate(this))
           .filter(it -> !ic.getBlocklist().contains(it.getPresentableName()))
           .collect(Collectors.toSet());
     }
@@ -51,9 +50,11 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
           .filter(it -> !ec.getBlocklist().contains(it.getPresentableName()))
           .collect(Collectors.toSet());
     }
-    templates = Stream.of(externals, builtinTemplates, internals)
-        .flatMap(Collection::stream)
-        .collect(Collectors.toSet());
+    // 按触发词去重, external -> builtin -> internal 优先级
+    templates = new HashSet<>(Stream.of(externals, builtinTemplates, internals)
+                                  .flatMap(Collection::stream)
+                                  .collect(Collectors.toMap(PostfixTemplate::getPresentableName, it -> it, (l, r) -> r))
+                                  .values());
   }
 
   @Override
@@ -65,7 +66,6 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
   public boolean isTerminalSymbol(char currentChar) {
     return currentChar == '.';
   }
-
   @Override
   public void preExpand(
       @NotNull PsiFile file,

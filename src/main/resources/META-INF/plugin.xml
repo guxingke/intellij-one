@@ -15,6 +15,8 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="The One Toolbox" displayType="STICKY_BALLOON"/>
+
     <codeInsight.template.postfixTemplateProvider language="JAVA"
         implementationClass="com.guxingke.intellij.plugin.postfix.ToolsPostfixTemplateProvider"/>
   </extensions>

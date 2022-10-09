@@ -10,20 +10,23 @@ import org.yaml.snakeyaml.Yaml;
 
 public class Configs {
 
-  private static Path confDir = Paths.get(System.getenv("HOME"), ".config", "the-one-toolbox");
+  private static Path confDir;
+  private static OneConfig config;
 
   static {
+    confDir = Paths.get(System.getenv("HOME"), ".config", "the-one-toolbox");
     var envDir = System.getenv("INTELLIJ_THE_ONE_TOOLBOX_CONFIG_DIR");
     if (envDir != null) {
       confDir = Paths.get(envDir);
     }
+
+    config = loadConfig();
   }
 
   public static Path getConfDir() {
     return confDir;
   }
 
-  private static OneConfig config = loadConfig();
 
   public static OneConfig getConfig() {
     return config;
@@ -48,7 +51,6 @@ public class Configs {
       return OneConfig.defaultCfg();
     }
   }
-
 
   /*
   postfix:

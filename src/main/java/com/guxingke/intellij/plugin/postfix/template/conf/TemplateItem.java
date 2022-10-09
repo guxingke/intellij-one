@@ -13,7 +13,7 @@ public class TemplateItem {
   @NotNull
   private String template;
 
-  public String getType() {
+  public @NotNull String getType() {
     return type;
   }
 
@@ -21,7 +21,7 @@ public class TemplateItem {
     this.type = type;
   }
 
-  public String getClazz() {
+  public @NotNull String getClazz() {
     return clazz;
   }
 
@@ -37,11 +37,11 @@ public class TemplateItem {
     this.requires = requires;
   }
 
-  public String getTemplate() {
+  public @NotNull String getTemplate() {
     return template;
   }
 
-  public void setTemplate(String template) {
+  public void setTemplate(@NotNull String template) {
     this.template = template;
   }
 }

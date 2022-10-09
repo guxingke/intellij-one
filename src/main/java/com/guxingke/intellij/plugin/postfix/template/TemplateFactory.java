@@ -41,7 +41,7 @@ public class TemplateFactory {
     }
 
     var pp = confDir.resolve("postfix");
-    if (!Files.exists(pp) || !Files.isRegularFile(pp)) {
+    if (!Files.exists(pp) || !Files.isDirectory(pp)) {
       return new HashSet<>();
     }
 

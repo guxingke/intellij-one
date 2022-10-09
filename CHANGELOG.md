@@ -6,8 +6,19 @@
 
 ### Added
 
-- postfix template variable order.
 - struct mapper type converter.
+ 
+## [0.0.5] - 2022-10-09
+
+### Added
+
+- postfix template variable order.
+- postfix template expression variable.
+
+### Fixed
+
+- builtin templates typo
+- external templates load failed
 
 ## [0.0.4] - 2022-10-07
 
