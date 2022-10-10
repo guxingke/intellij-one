@@ -4,5 +4,6 @@ import java.util.Set;
 
 public interface Const {
 
+  String CLS_JAVA_LANG_STRING = "java.lang.String";
   Set<String> PREDEFINED_VARS = Set.of("expr", "exprClass", "componentClass", "END");
 }

@@ -37,7 +37,7 @@ public class Configs {
    *
    * 文件 config.yml
    */
-  private static OneConfig loadConfig() {
+  public static OneConfig loadConfig() {
     var cfp = getConfDir().resolve("config.yml");
     if (!cfp.toFile().exists() || !cfp.toFile().isFile()) {
       return OneConfig.defaultCfg();
@@ -73,6 +73,7 @@ public class Configs {
    */
   public static class OneConfig {
 
+    private boolean debug = false;
     private PostfixConfig postfix = new PostfixConfig();
 
     public PostfixConfig getPostfix() {
@@ -85,6 +86,14 @@ public class Configs {
 
     public static OneConfig defaultCfg() {
       return new OneConfig();
+    }
+
+    public boolean isDebug() {
+      return debug;
+    }
+
+    public void setDebug(boolean debug) {
+      this.debug = debug;
     }
   }
 

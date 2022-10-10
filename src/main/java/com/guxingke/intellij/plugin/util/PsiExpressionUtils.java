@@ -41,6 +41,13 @@ public interface PsiExpressionUtils {
     }
 
     var pc = ((PsiClassType) type).resolve();
+    return isClass(pc, qualifiedName);
+  }
+
+  public static boolean isClass(
+      PsiClass pc,
+      @NotNull String qualifiedName
+  ) {
     if (pc == null) {
       return false;
     }

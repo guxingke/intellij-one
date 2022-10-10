@@ -17,6 +17,15 @@ public class Main {
     var d = new DemoDTO();
     d.setId(obj.getId());
     d.setName(obj.getName());
+    d.setCate(obj.getCate() == null ? null : obj.getCate().name());
+    return d;
+  }
+
+  private static Demo map(DemoDTO obj) {
+    var d = new Demo();
+    d.setId(obj.getId());
+    d.setName(obj.getName());
+    d.setCate(obj.getCate() == null ? null : Enum.valueOf(CateEnum.class, obj.getCate()));
     return d;
   }
 
@@ -24,6 +33,8 @@ public class Main {
 
     private Integer id;
     private String name;
+
+    private CateEnum cate;
 
     public Integer getId() {
       return id;
@@ -39,6 +50,14 @@ public class Main {
 
     public void setName(String name) {
       this.name = name;
+    }
+
+    public CateEnum getCate() {
+      return cate;
+    }
+
+    public void setCate(CateEnum cate) {
+      this.cate = cate;
     }
   }
 
@@ -48,6 +67,8 @@ public class Main {
 
     private String name;
 
+    private String cate;
+
     public Integer getId() {
       return id;
     }
@@ -63,5 +84,21 @@ public class Main {
     public void setName(String name) {
       this.name = name;
     }
+
+    public String getCate() {
+      return cate;
+    }
+
+    public void setCate(String cate) {
+      this.cate = cate;
+    }
+  }
+
+  enum CateEnum {
+    A,
+    B,
+    C,
+    D,
+    ;
   }
 }

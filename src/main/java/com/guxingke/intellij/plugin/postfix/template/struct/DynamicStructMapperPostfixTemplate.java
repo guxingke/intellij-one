@@ -22,15 +22,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * pojo mapper
- *
- * 暂时只支持单入参
  */
-public class StructMapperPostfixTemplate extends BasePostfixTemplate {
+public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
 
   List<Converter> converters = List.of(new EnumStringConverter(), new StringEnumConverter());
 
-  public StructMapperPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("map", "map", "pojo mapper", cond(), provider);
+  public DynamicStructMapperPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
+    super("map2", "map2", "pojo mapper", cond(), provider);
   }
 
   private static Condition<PsiElement> cond() {
