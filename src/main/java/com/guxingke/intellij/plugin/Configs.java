@@ -38,7 +38,12 @@ public class Configs {
    * 文件 config.yml
    */
   public static OneConfig loadConfig() {
-    var cfp = getConfDir().resolve("config.yml");
+    var dir = getConfDir();
+    if (!dir.toFile().exists()) {
+      // not found config dir
+      return OneConfig.defaultCfg();
+    }
+    var cfp = dir.resolve("config.yml");
     if (!cfp.toFile().exists() || !cfp.toFile().isFile()) {
       return OneConfig.defaultCfg();
     }

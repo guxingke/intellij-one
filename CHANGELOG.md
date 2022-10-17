@@ -9,6 +9,16 @@
 - struct mapper type converter.
 - struct mapper rule config.
 - debug mode for debugging config, be reload user config at most 60 seconds.
+ 
+## [0.0.6] - 2022-10-15
+
+### Added
+ 
+- mapper user cfg beta.
+
+### Fixed
+
+- user config dir not exists.
 
 ## [0.0.5] - 2022-10-09
 
