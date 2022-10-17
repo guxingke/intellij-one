@@ -1,5 +1,6 @@
 package com.guxingke.intellij.plugin.postfix.template.struct.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapperConfig {
@@ -7,6 +8,13 @@ public class MapperConfig {
   private String namespace;
 
   private List<MapperDefinition> definitions;
+
+  public static MapperConfig defaultConfig() {
+    var cfg = new MapperConfig();
+    cfg.setNamespace("default");
+    cfg.setDefinitions(new ArrayList<>());
+    return cfg;
+  }
 
   public String getNamespace() {
     return namespace;

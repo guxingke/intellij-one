@@ -1,6 +1,5 @@
 package com.guxingke.intellij.plugin.postfix.template.struct;
 
-import com.guxingke.intellij.plugin.postfix.Var;
 import com.intellij.codeInsight.template.impl.Variable;
 import java.util.List;
 
