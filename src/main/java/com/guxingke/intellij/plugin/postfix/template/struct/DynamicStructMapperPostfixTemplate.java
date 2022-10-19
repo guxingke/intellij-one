@@ -12,10 +12,8 @@ import com.intellij.codeInsight.template.impl.SelectionNode;
 import com.intellij.codeInsight.template.impl.TextExpression;
 import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethod;
@@ -28,20 +26,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.lucene.geo.SimpleWKTShapeParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 /**
  * pojo mapper
+ *
+ * 暂时只支持单入参
  */
 public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
 
   List<MapperConfig> cfgs;
 
   public DynamicStructMapperPostfixTemplate(@Nullable PostfixTemplateProvider provider) {
-    super("map2", "map2", "pojo mapper", cond(), provider);
+    super("map", "map", "pojo mapper", cond(), provider);
     cfgs = loadCfg();
   }
 
@@ -114,28 +113,18 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
     var sb = new StringBuilder();
     List<Variable> vars = new ArrayList<>();
 
-    vars.add(var("name", ctx.getExpression().getText()));
-    sb.append("if ($name$ == null) {return null;}");
-    vars.add(var("out", "d"));
+    vars.add(var("__name", ctx.getExpression().getText()));
+    sb.append("if ($__name$ == null) {return null;}");
+    vars.add(var("__out", "d"));
     var name = ctx.getFacade()
         .findClass(ctx.getOutput().getQualifiedName(), GlobalSearchScope.projectScope(ctx.getProject()))
         .getQualifiedName();
     vars.add(var("inputClassName", name));
-    sb.append("var $out$ = new $inputClassName$();");
+    sb.append("var $__out$ = new $inputClassName$();");
     // all set method
-    var record = ctx.getIntput().isRecord();
-    var ims = ctx.getIntput().getAllMethods();
-    var igm = Arrays.stream(ims)
-        .filter(it -> it.getParameterList().isEmpty()) // 无参
-        .filter(it -> it.getName().startsWith("get") || it.getName().startsWith("is"))
-        .collect(Collectors.toMap(it -> propertyName(it.getName()), it -> it, (l, r) -> l));
-
-    // record mode
-    if (record) {
-      var rgm = Arrays.stream(ims).filter(it -> it.getParameterList().isEmpty()) // 无参
-          .collect(Collectors.toMap(it -> captureName(it.getName()), it -> it, (l, r) -> l));
-      igm.putAll(rgm);
-    }
+    var ims = ctx.getInput().getAllMethods();
+    var igm = Arrays.stream(ims).filter(it -> it.getParameterList().isEmpty()) // 无参
+        .collect(Collectors.toMap(it -> propertyName(it.getName(), ctx.getInput().isRecord()), it -> it, (l, r) -> l));
 
     for (PsiMethod method : ctx.getOutput().getAllMethods()) {
       if (method.getParameterList().getParameters().length != 1) {
@@ -146,39 +135,43 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
         continue;
       }
 
-      var pn = propertyName(mn);
+      var pn = propertyName(mn, ctx.getOutput().isRecord());
       var get = igm.get(pn);
+      var setVar = "__set_" + pn;
+      var getVar = "__get_" + pn;
       if (get == null) {
-        vars.add(var(mn, null));
-        sb.append("$out$.($" + mn + "$);");
+        vars.add(var(setVar, mn));
+        vars.add(var(getVar, null));
+        sb.append("$__out$.$" + setVar + "$($" + getVar + "$);");
         continue;
       }
-      vars.add(var(mn, mn));
-      vars.add(var(get.getName(), "%s()".formatted(get.getName())));
+      vars.add(var(setVar, mn));
+      vars.add(var(getVar, "%s()".formatted(get.getName())));
 
       // type
       var ot = method.getParameterList().getParameter(0).getType().getCanonicalText();
       var it = get.getReturnType().getCanonicalText();
 
       if (Objects.equals(ot, it)) {
-        sb.append("$out$.$" + mn + "$" + "(" + "$name$.$" + get.getName() + "$" + ");");
+        sb.append("$__out$.$" + setVar + "$" + "(" + "$__name$.$" + getVar + "$" + ");");
       } else { // type not equals
         // filter template
         var md = match(ctx, it, ot);
         if (md == null) { // not found
-          sb.append("$out$.$" + mn + "$" + "(" + "$name$.$" + get.getName() + "$" + ");");
+          sb.append("$__out$.$" + setVar + "$" + "(" + "$__name$.$" + getVar + "$" + ");");
         } else {
           // add variable
-          var getExpr = "$name$.$" + get.getName() + "$";
+          var getExpr = "$__name$.$" + getVar + "$";
           var tpl = md.getTemplate();
-          tpl = tpl.replace("$getExpr$", getExpr);
-          tpl = tpl.replace("$getReturnTypeName$", ot);
-          sb.append("$out$.$" + mn + "$" + "(" + tpl + ");");
+          tpl = tpl.replace("$__getExpr$", getExpr);
+          tpl = tpl.replace("$__outputName$", ot);
+          tpl = tpl.replace("$__inputName$", it);
+          sb.append("$__out$.$" + setVar + "$" + "(" + tpl + ");");
         }
       }
     }
 
-    sb.append("return $out$;$END$");
+    sb.append("return $__out$;$END$");
     return new MapperResult(sb.toString(), vars);
   }
 
@@ -190,8 +183,9 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
     var facade = ctx.getFacade();
     var project = ctx.getProject();
 
-    var is = facade.findClass(inputClassName, GlobalSearchScope.allScope(project));
-    var os = facade.findClass(outputClassName, GlobalSearchScope.allScope(project));
+    var scope = GlobalSearchScope.allScope(project);
+    var is = facade.findClass(inputClassName, scope);
+    var os = facade.findClass(outputClassName, scope);
 
     for (MapperConfig cfg : cfgs) {
       for (MapperDefinition d : cfg.getDefinitions()) {
@@ -202,7 +196,91 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
           continue;
         }
 
-        // TODO check requires
+        if (d.getRequires() == null || d.getRequires().isEmpty()) {
+          return d;
+        }
+
+        boolean r = true;
+        for (MapperRequire require : d.getRequires()) {
+          if (!r) {
+            break;
+          }
+          final var name = require.getName();
+          switch (require.getType()) {
+            case "class" -> {
+              var cs = facade.findClass(name, scope);
+              if (cs == null) { // not exists
+                r = false;
+              }
+            }
+            case "method" -> {
+              var cls = require.getClazz();
+              if (cls.startsWith("$")) {// variable
+                var vn = cls.substring(1, cls.length() - 1);
+                switch (vn) {
+                  case "inputName":
+                    cls = inputClassName;
+                    break;
+                  case "outputName":
+                    cls = outputClassName;
+                    break;
+                  default:
+                    r = false;
+                    break;
+                }
+
+                if (!r) {
+                  break;
+                }
+              }
+              var cs = facade.findClass(cls, scope);
+              if (cs == null) {
+                r = false;
+                break;
+              }
+              var exists = Arrays.stream(cs.getAllMethods()).anyMatch(it -> it.getName().equals(name));
+              if (!exists) {
+                r = false;
+              }
+            }
+            case "field" -> {
+              var cls = require.getClazz();
+              if (cls.startsWith("$")) {// variable
+                var vn = cls.substring(1, cls.length() - 1);
+                switch (vn) {
+                  case "inputName":
+                    cls = inputClassName;
+                    break;
+                  case "outputName":
+                    cls = outputClassName;
+                    break;
+                  default:
+                    r = false;
+                    break;
+                }
+
+                if (!r) {
+                  break;
+                }
+              }
+              var cs = facade.findClass(cls, scope);
+              if (cs == null) {
+                r = false;
+                break;
+              }
+              var exists = Arrays.stream(cs.getAllFields()).anyMatch(it -> it.getName().equals(name));
+              if (!exists) {
+                r = false;
+              }
+            }
+            default -> r = false;
+          }
+        }
+
+        if (!r) {
+          continue;
+        }
+
         return d;
       }
     }
@@ -220,7 +298,13 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
     return new Variable(name, new TextExpression(val), new SelectionNode(), false, false);
   }
 
-  private String propertyName(String methodName) {
+  private String propertyName(
+      String methodName,
+      boolean record
+  ) {
+    if (record) {
+      return captureName(methodName);
+    }
     if (methodName.startsWith("is")) {
       return methodName.substring(2);
     }

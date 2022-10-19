@@ -10,7 +10,7 @@ public class MapperContext {
 
   private PsiMethod method;
 
-  private PsiClass intput;
+  private PsiClass input;
   private PsiClass output;
 
   private PsiExpression expression;
@@ -19,14 +19,14 @@ public class MapperContext {
 
   public MapperContext(
       PsiMethod method,
-      PsiClass intput,
+      PsiClass input,
       PsiClass output,
       PsiExpression expression,
       Project project,
       JavaPsiFacade facade
   ) {
     this.method = method;
-    this.intput = intput;
+    this.input = input;
     this.output = output;
     this.expression = expression;
     this.project = project;
@@ -37,8 +37,8 @@ public class MapperContext {
     return method;
   }
 
-  public PsiClass getIntput() {
-    return intput;
+  public PsiClass getInput() {
+    return input;
   }
 
   public PsiClass getOutput() {

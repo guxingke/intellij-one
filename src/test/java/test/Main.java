@@ -14,18 +14,37 @@ public class Main {
   }
 
   private static DemoDTO map(Demo obj) {
+    if (obj == null) {
+      return null;
+    }
     var d = new DemoDTO();
     d.setId(obj.getId());
     d.setName(obj.getName());
     d.setCate(obj.getCate() == null ? null : obj.getCate().name());
+    d.setVersion(obj.getVersion());
     return d;
   }
 
   private static Demo map(DemoDTO obj) {
+    if (obj == null) {
+      return null;
+    }
     var d = new Demo();
     d.setId(obj.getId());
     d.setName(obj.getName());
     d.setCate(obj.getCate() == null ? null : Enum.valueOf(CateEnum.class, obj.getCate()));
+    return d;
+  }
+
+  private static Demo map(DemoRecord obj) {
+    if (obj == null) {
+      return null;
+    }
+    var d = new Demo();
+    d.setId(obj.id());
+    d.setName(obj.name());
+    d.setCate(obj.cate() == null ? null : Enum.valueOf(CateEnum.class, obj.cate()));
+//    d.setVersion();
     return d;
   }
 
@@ -35,6 +54,8 @@ public class Main {
     private String name;
 
     private CateEnum cate;
+
+    private Integer version;
 
     public Integer getId() {
       return id;
@@ -59,6 +80,14 @@ public class Main {
     public void setCate(CateEnum cate) {
       this.cate = cate;
     }
+
+    public Integer getVersion() {
+      return version;
+    }
+
+    public void setVersion(Integer version) {
+      this.version = version;
+    }
   }
 
   static class DemoDTO {
@@ -68,6 +97,8 @@ public class Main {
     private String name;
 
     private String cate;
+
+    private Integer version;
 
     public Integer getId() {
       return id;
@@ -92,7 +123,20 @@ public class Main {
     public void setCate(String cate) {
       this.cate = cate;
     }
+
+    public Integer getVersion() {
+      return version;
+    }
+
+    public void setVersion(Integer version) {
+      this.version = version;
+    }
   }
+
+  static record DemoRecord(Integer id, String name, String cate) {
+
+  }
+
 
   enum CateEnum {
     A,

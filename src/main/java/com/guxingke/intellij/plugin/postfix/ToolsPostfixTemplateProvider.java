@@ -3,7 +3,6 @@ package com.guxingke.intellij.plugin.postfix;
 import com.guxingke.intellij.plugin.Configs;
 import com.guxingke.intellij.plugin.postfix.template.TemplateFactory;
 import com.guxingke.intellij.plugin.postfix.template.struct.DynamicStructMapperPostfixTemplate;
-import com.guxingke.intellij.plugin.postfix.template.struct.StructMapperPostfixTemplate;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplate;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
 import com.intellij.openapi.diagnostic.Logger;
@@ -46,7 +45,7 @@ public class ToolsPostfixTemplateProvider implements PostfixTemplateProvider {
     var ic = cfg.getPostfix().getInternal();
     Set<PostfixTemplate> internals = new HashSet<>();
     if (ic.isEnable()) {
-      internals = Stream.of(new StructMapperPostfixTemplate(this), new DynamicStructMapperPostfixTemplate(this))
+      internals = Stream.of(new DynamicStructMapperPostfixTemplate(this))
           .filter(it -> !ic.getBlocklist().contains(it.getPresentableName()))
           .collect(Collectors.toSet());
     }

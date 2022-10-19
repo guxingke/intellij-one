@@ -4,12 +4,14 @@
 
 ## [Unreleased]
 
+## [0.0.7] - 2022-10-18
+
 ### Added
 
 - struct mapper type converter.
-- struct mapper rule config.
+- external struct mapper rule config.
 - debug mode for debugging config, be reload user config at most 60 seconds.
- 
+
 ## [0.0.6] - 2022-10-15
 
 ### Added
