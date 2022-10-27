@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- proto3 mapper
+
 ## [0.0.7] - 2022-10-18
 
 ### Added

@@ -1,10 +1,12 @@
 package com.guxingke.intellij.plugin.postfix.template.struct;
 
+import com.guxingke.intellij.plugin.postfix.template.struct.config.MapperConfig;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethod;
+import java.util.List;
 
 public class MapperContext {
 
@@ -17,13 +19,16 @@ public class MapperContext {
   private Project project;
   private JavaPsiFacade facade;
 
+  private List<MapperConfig> cfgs;
+
   public MapperContext(
       PsiMethod method,
       PsiClass input,
       PsiClass output,
       PsiExpression expression,
       Project project,
-      JavaPsiFacade facade
+      JavaPsiFacade facade,
+      List<MapperConfig> cfgs
   ) {
     this.method = method;
     this.input = input;
@@ -31,6 +36,7 @@ public class MapperContext {
     this.expression = expression;
     this.project = project;
     this.facade = facade;
+    this.cfgs = cfgs;
   }
 
   public PsiMethod getMethod() {
@@ -55,5 +61,9 @@ public class MapperContext {
 
   public JavaPsiFacade getFacade() {
     return facade;
+  }
+
+  public List<MapperConfig> getCfgs() {
+    return cfgs;
   }
 }
