@@ -69,7 +69,7 @@ public class ProtobufOutputHandler extends AbstractHandler implements MapperHand
         continue;
       }
       vars.add(var(setVar, mn));
-      vars.add(var(getVar, "%s()".formatted(get.getName())));
+      vars.add(var(getVar, String.format("%s()", get.getName())));
 
       // type
       var ot = set.getParameterList().getParameter(0).getType().getCanonicalText();

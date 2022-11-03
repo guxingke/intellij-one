@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
@@ -154,7 +155,7 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
             }
           })
           .filter(Objects::nonNull)
-          .toList();
+          .collect(Collectors.toList());
 
       if (mcs.isEmpty()) {
         return List.of(MapperConfig.defaultConfig());

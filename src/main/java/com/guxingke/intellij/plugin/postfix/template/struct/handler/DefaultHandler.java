@@ -54,7 +54,7 @@ public class DefaultHandler extends AbstractHandler implements MapperHandler {
         continue;
       }
       vars.add(var(setVar, mn));
-      vars.add(var(getVar, "%s()".formatted(get.getName())));
+      vars.add(var(getVar, String.format("%s()", get.getName())));
 
       // type
       var ot = method.getParameterList().getParameter(0).getType().getCanonicalText();

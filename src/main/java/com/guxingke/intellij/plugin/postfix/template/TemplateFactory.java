@@ -49,7 +49,7 @@ public class TemplateFactory {
       var cfgs = Files.list(pp)
           .filter(it -> it.getFileName().toString().endsWith(".yml") || it.getFileName().toString().endsWith(".yaml"))
           .map(it -> TemplateConfig.load(it.toAbsolutePath().toString()))
-          .toList();
+          .collect(Collectors.toList());
       return cfgs.stream()
           .flatMap(it -> build(it, provider).stream())
           .filter(Objects::nonNull)
