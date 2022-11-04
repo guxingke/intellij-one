@@ -32,6 +32,17 @@ public class Configs {
     return config;
   }
 
+  public static String env(
+      String key,
+      String defaultValue
+  ) {
+    var v = System.getenv(key);
+    if (v == null) {
+      return defaultValue;
+    }
+    return v;
+  }
+
   /**
    * 默认配置目录，当前用户目录下 `.config/the-one-toolbox`。 可通过环境变量覆盖 INTELLIJ_THE_ONE_TOOLBOX_CONFIG_DIR
    *
@@ -80,6 +91,7 @@ public class Configs {
 
     private boolean debug = false;
     private PostfixConfig postfix = new PostfixConfig();
+    private LineMarkerConfig linemarker = new LineMarkerConfig();
 
     public PostfixConfig getPostfix() {
       return postfix;
@@ -99,6 +111,46 @@ public class Configs {
 
     public void setDebug(boolean debug) {
       this.debug = debug;
+    }
+
+    public LineMarkerConfig getLinemarker() {
+      return linemarker;
+    }
+
+    public void setLinemarker(LineMarkerConfig linemarker) {
+      this.linemarker = linemarker;
+    }
+  }
+
+  public static class LineMarkerConfig {
+
+    // defualt to false
+    private boolean enable = false;
+    private String handler = "com.company.Handler";
+    private String dispatcher = "com.company.Dispatcher";
+
+    public boolean isEnable() {
+      return enable;
+    }
+
+    public void setEnable(boolean enable) {
+      this.enable = enable;
+    }
+
+    public String getHandler() {
+      return handler;
+    }
+
+    public void setHandler(String handler) {
+      this.handler = handler;
+    }
+
+    public String getDispatcher() {
+      return dispatcher;
+    }
+
+    public void setDispatcher(String dispatcher) {
+      this.dispatcher = dispatcher;
     }
   }
 

@@ -61,6 +61,37 @@ public interface PsiExpressionUtils {
       if (Objects.equals(cc.getQualifiedName(), qualifiedName)) {
         return true;
       }
+      for (PsiClass ccc : cc.getSupers()) {
+        var cccc = isClass(ccc, qualifiedName);
+        if (cccc) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean isImplInterface(
+      PsiClass pc,
+      @NotNull String qualifiedName
+  ) {
+    if (pc == null) {
+      return false;
+    }
+    if (Objects.equals(pc.getQualifiedName(), qualifiedName)) {
+      return true;
+    }
+
+    for (PsiClass cc : pc.getInterfaces()) {
+      if (Objects.equals(cc.getQualifiedName(), qualifiedName)) {
+        return true;
+      }
+      for (PsiClass ci  : cc.getInterfaces()) {
+        var cic = isImplInterface(ci, qualifiedName);
+        if (cic) {
+          return true;
+        }
+      }
     }
     return false;
   }
