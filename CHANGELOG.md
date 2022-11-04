@@ -6,6 +6,16 @@
 
 ### Added
 
+## [0.0.9] - 2022-11-05
+
+### Added
+
+- related line marker for cqrs dispatcher and handler.
+ 
+## [0.0.8] - 2022-11-01
+
+### Added
+ 
 - proto3 mapper
 
 ## [0.0.7] - 2022-10-18
