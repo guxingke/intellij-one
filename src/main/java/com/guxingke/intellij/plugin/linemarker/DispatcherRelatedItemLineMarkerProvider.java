@@ -49,7 +49,7 @@ public class DispatcherRelatedItemLineMarkerProvider extends RelatedItemLineMark
     if (!Configs.getConfig().getLinemarker().isEnable()) {
       return;
     }
-    log.info("current cfg %s %s".formatted(handlerClassName, dispatcherClassName));
+    log.info(String.format("current cfg %s %s", handlerClassName, dispatcherClassName));
     handlerClassName = Configs.getConfig().getLinemarker().getHandler();
     dispatcherClassName = Configs.getConfig().getLinemarker().getDispatcher();
 
@@ -113,7 +113,7 @@ public class DispatcherRelatedItemLineMarkerProvider extends RelatedItemLineMark
         }
       }
     } catch (Exception e) {
-      log.error("failed parse call types");
+      log.info("failed parse call types");
     }
 
     if (ac == null || cc == null) {
@@ -305,7 +305,7 @@ public class DispatcherRelatedItemLineMarkerProvider extends RelatedItemLineMark
               continue;
             }
 
-            var v = "%s %s %s".formatted(mot, m.getName(), mit);
+            var v = String.format("%s %s %s", mot, m.getName(), mit);
             log.info("found handler method" + v);
             results.add(m);
           }

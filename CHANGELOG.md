@@ -6,6 +6,12 @@
 
 ### Added
 
+## [0.10.0] - 2022-11-15
+
+### Added
+
+- new action for snake case keyword to camel case word.
+
 ## [0.0.9] - 2022-11-05
 
 ### Added

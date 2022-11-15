@@ -12,6 +12,12 @@
     <action id="HelloAction" class="com.guxingke.intellij.plugin.action.HelloAction" text="hello">
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </action>
+
+    <action id="snake2camel" class="com.guxingke.intellij.plugin.action.SnakeCase2CamelCaseAction"
+        text="snake to camel">
+      <add-to-group group-id="EditMenu" anchor="first"/>
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
