@@ -110,6 +110,20 @@ public class MapperConfig {
     public void setTemplate(String template) {
       this.template = template;
     }
+
+    @Override
+    public String toString() {
+      return "MapperDefinition{" +
+          "name='" + name + '\'' +
+          ", enable=" + enable +
+          ", inputType='" + inputType + '\'' +
+          ", intputName='" + intputName + '\'' +
+          ", outputType='" + outputType + '\'' +
+          ", outputName='" + outputName + '\'' +
+          ", requires=" + requires +
+          ", template='" + template + '\'' +
+          '}';
+    }
   }
 
   public static class MapperRequire {

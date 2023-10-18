@@ -26,7 +26,7 @@
     <codeInsight.template.postfixTemplateProvider language="JAVA"
         implementationClass="com.guxingke.intellij.plugin.postfix.ToolsPostfixTemplateProvider"/>
 
-    <codeInsight.lineMarkerProvider language="JAVA"
-        implementationClass="com.guxingke.intellij.plugin.linemarker.DispatcherRelatedItemLineMarkerProvider"/>
+<!--    <codeInsight.lineMarkerProvider language="JAVA"-->
+<!--        implementationClass="com.guxingke.intellij.plugin.linemarker.DispatcherRelatedItemLineMarkerProvider"/>-->
   </extensions>
 </idea-plugin>
