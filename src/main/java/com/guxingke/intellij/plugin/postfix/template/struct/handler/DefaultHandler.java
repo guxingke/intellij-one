@@ -32,6 +32,7 @@ public class DefaultHandler extends AbstractHandler implements MapperHandler {
     // all set method
     var ims = ctx.getInput().getAllMethods();
     var igm = Arrays.stream(ims).filter(it -> it.getParameterList().isEmpty()) // 无参
+        .filter(it -> !it.getName().startsWith("has"))
         .collect(Collectors.toMap(it -> propertyName(it.getName(), ctx.getInput().isRecord()), it -> it, (l, r) -> l));
 
     for (PsiMethod method : ctx.getOutput().getAllMethods()) {

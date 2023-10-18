@@ -5,6 +5,7 @@ import com.guxingke.intellij.plugin.postfix.template.BasePostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.struct.config.MapperConfig;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.DefaultHandler;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.MapperHandler;
+import com.guxingke.intellij.plugin.postfix.template.struct.handler.ProtobufInputHandler;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.ProtobufOutputHandler;
 import com.guxingke.intellij.plugin.util.PsiExpressionUtils;
 import com.intellij.codeInsight.template.Template;
@@ -43,7 +44,7 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
     super("map", "map", "pojo mapper", cond(), provider);
     cfgs = loadCfg();
 
-    handlers = List.of(new ProtobufOutputHandler(), new DefaultHandler());
+    handlers = List.of(new ProtobufOutputHandler(), new ProtobufInputHandler(), new DefaultHandler());
   }
 
   private static Condition<PsiElement> cond() {
@@ -116,6 +117,8 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
     if (handler == null) {
       log.warn("not found mapper handler " + ctx.getExpression().getText());
       return new MapperResult("", List.of());
+    } else {
+      log.info("found mapper for " + ctx + " | " + handler.getClass().getName());
     }
     return handler.handle(ctx);
   }

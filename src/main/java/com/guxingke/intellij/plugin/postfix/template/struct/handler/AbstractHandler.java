@@ -36,6 +36,9 @@ public abstract class AbstractHandler implements MapperHandler {
     if (methodName.startsWith("addAll")) {
       return methodName.substring(6);
     }
+    if (methodName.startsWith("get") && methodName.endsWith("List")) {
+      return methodName.substring(3, methodName.length() - 4);
+    }
     return methodName.substring(3);
   }
 

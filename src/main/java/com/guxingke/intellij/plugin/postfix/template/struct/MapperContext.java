@@ -66,4 +66,18 @@ public class MapperContext {
   public List<MapperConfig> getCfgs() {
     return cfgs;
   }
+
+
+  @Override
+  public String toString() {
+    return "MapperContext{" +
+        "method=" + method +
+        ", input=" + input +
+        ", output=" + output +
+        ", expression=" + expression +
+        ", project=" + project +
+        ", facade=" + facade +
+        ", cfgs=" + cfgs +
+        '}';
+  }
 }

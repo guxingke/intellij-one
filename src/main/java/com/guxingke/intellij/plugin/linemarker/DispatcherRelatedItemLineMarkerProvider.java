@@ -49,7 +49,9 @@ public class DispatcherRelatedItemLineMarkerProvider extends RelatedItemLineMark
     if (!Configs.getConfig().getLinemarker().isEnable()) {
       return;
     }
-    log.info(String.format("current cfg %s %s", handlerClassName, dispatcherClassName));
+//    if (log.isDebugEnabled()) {
+//      log.debug(String.format("current cfg %s %s", handlerClassName, dispatcherClassName));
+//    }
     handlerClassName = Configs.getConfig().getLinemarker().getHandler();
     dispatcherClassName = Configs.getConfig().getLinemarker().getDispatcher();
 
@@ -288,7 +290,9 @@ public class DispatcherRelatedItemLineMarkerProvider extends RelatedItemLineMark
           continue;
         }
         if (PsiExpressionUtils.isClass(cls, handlerClassName)) {
-          log.info("found handler " + cls.getQualifiedName());
+          if (log.isDebugEnabled()) {
+            log.debug("found handler " + cls.getQualifiedName());
+          }
 
           // match
           for (PsiMethod m : cls.getAllMethods()) {
@@ -306,7 +310,9 @@ public class DispatcherRelatedItemLineMarkerProvider extends RelatedItemLineMark
             }
 
             var v = String.format("%s %s %s", mot, m.getName(), mit);
-            log.info("found handler method" + v);
+            if (log.isDebugEnabled()) {
+              log.debug("found handler method" + v);
+            }
             results.add(m);
           }
         }
