@@ -4,6 +4,8 @@
 [![Version](https://img.shields.io/jetbrains/plugin/v/20032-the-one-toolbox.svg)](https://plugins.jetbrains.com/plugin/20032-the-one-toolbox)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/20032-the-one-toolbox.svg)](https://plugins.jetbrains.com/plugin/20032-the-one-toolbox)
 
+> This is deprecated because I switched to kotlin.
+
 <!-- Plugin description -->
 Personal java daily development of all-in-one plug-in collection.
 

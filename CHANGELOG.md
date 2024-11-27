@@ -4,13 +4,19 @@
 
 ## [Unreleased]
 
+## [0.13.0] - 2023-10-18
+
+### Added
+
+- mapper for lombok builder as output
+
+
 ## [0.12.0] - 2023-10-18
 
 ### Added
 
 - mapper for proto3 as input
 
-### Added
 
 ## [0.10.0] - 2022-11-15
 
