@@ -3,9 +3,11 @@ package com.guxingke.intellij.plugin.postfix.template.struct;
 import com.guxingke.intellij.plugin.Configs;
 import com.guxingke.intellij.plugin.postfix.template.BasePostfixTemplate;
 import com.guxingke.intellij.plugin.postfix.template.struct.config.MapperConfig;
+import com.guxingke.intellij.plugin.postfix.template.struct.handler.LombokBuilderOutputHandler;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.DefaultHandler;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.MapperHandler;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.ProtobufInputHandler;
+import com.guxingke.intellij.plugin.postfix.template.struct.handler.ProtobufInputWithLombokBuilderOutputHandler;
 import com.guxingke.intellij.plugin.postfix.template.struct.handler.ProtobufOutputHandler;
 import com.guxingke.intellij.plugin.util.PsiExpressionUtils;
 import com.intellij.codeInsight.template.Template;
@@ -44,7 +46,13 @@ public class DynamicStructMapperPostfixTemplate extends BasePostfixTemplate {
     super("map", "map", "pojo mapper", cond(), provider);
     cfgs = loadCfg();
 
-    handlers = List.of(new ProtobufOutputHandler(), new ProtobufInputHandler(), new DefaultHandler());
+    handlers = List.of(
+        new ProtobufInputWithLombokBuilderOutputHandler(),
+        new LombokBuilderOutputHandler(),
+        new ProtobufOutputHandler(),
+        new ProtobufInputHandler(),
+        new DefaultHandler()
+    );
   }
 
   private static Condition<PsiElement> cond() {
